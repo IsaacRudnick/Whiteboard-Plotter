@@ -1,0 +1,6 @@
+pyserial
+numpy
+progress
+svgoutline
+lxml
+opencv-python
