@@ -1,3 +1,6 @@
+#ifndef SERVOS_H
+#define SERVOS_H
+
 #include <Servo.h>
 
 Servo penServo = Servo();
@@ -9,3 +12,5 @@ void setupServos()
 }
 
 int servos_count = sizeof(servos) / sizeof(servos[0]);
+
+#endif

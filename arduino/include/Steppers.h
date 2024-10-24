@@ -1,3 +1,6 @@
+#ifndef STEPPERS_H
+#define STEPPERS_H
+
 #include <AccelStepper.h>
 // #include <MultiStepper.h>
 
@@ -27,3 +30,5 @@ void setupSteppers()
 
 int steppers_count = sizeof(steppers) / sizeof(steppers[0]);
 // int groups_count = sizeof(stepperGroups) / sizeof(stepperGroups[0]);
+
+#endif

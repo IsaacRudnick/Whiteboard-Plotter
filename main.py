@@ -10,6 +10,9 @@ import xml.etree.ElementTree as ET
 from progress.bar import ChargingBar
 import cv2
 import actuators
+import ArduinoInterface
+from Stepper import StepperDirection
+from Servo import ServoConnectionType, ServoActuationType, ServoInverted
 
 # =========================================== WARNINGS =========================================== #
 # Make sure user isn't accidentally starting from a point other than 0
@@ -44,10 +47,19 @@ if lp_warning or rp_warning or tp_warning or bp_warning:
 # ===================================== Classes and Instances ==================================== #
 
 # Create the steppers and servo that control the physical plotter
-TopLeftStepper = actuators.StepperMotor(constants.TOP_LEFT_MOTOR_INDEX, inverted=False)
-TopRightStepper = actuators.StepperMotor(constants.TOP_RIGHT_MOTOR_INDEX, inverted=True)
-MarkerToggleServo = actuators.Servo(constants.SERVO_INDEX, 500, 1500, 180, False)
-MovementController = actuators.ActuatorController(user_settings.ARDUINO_USB_PORT, show_serial=False)
+TopLeftStepper = ArduinoInterface.Stepper(0, StepperDirection.NORMAL)
+TopRightStepper = ArduinoInterface.Stepper(1, StepperDirection.INVERTED)
+MarkerToggleServo = ArduinoInterface.Servo(0,
+                                           ServoConnectionType.PWM,
+                                           ServoActuationType.POSITION,
+                                           (500, 1500),
+                                           (0, 180),
+                                           ServoInverted.NORMAL)
+SteppersFinishedSensor = ArduinoInterface.Sensor(0)
+Arduino = ArduinoInterface.Arduino(user_settings.ARDUINO_USB_PORT,
+                                   [MarkerToggleServo],
+                                   [TopLeftStepper, TopRightStepper],
+                                   [SteppersFinishedSensor])
 
 
 @dataclass
@@ -68,40 +80,35 @@ class PointInstruction:
 
 
 class PenController:
-    def __init__(self):
-        self.pen_state = 'down'  # Initial pen state
+    def __init__(self, ArdI: ArduinoInterface.Arduino):
+        self.ArdI = ArdI
+
+        self.pen_down = True  # Initial pen state
         self.prev_instruction = None
-        self.time_per_step = 0.0015  # Time taken to move 1 step
 
     def raise_pen(self):
-        if self.pen_state != 'up':
-            MovementController.queue_set_degrees(MarkerToggleServo, constants.PEN_UP_SERVO_ANGLE)
-            MovementController.send_queue()
-            time.sleep(0.5)  # Wait for the servo to move
-            self.pen_state = 'up'
+        if self.pen_down:
+            self.ArdI.set_servo(MarkerToggleServo, constants.PEN_UP_SERVO_ANGLE)
+            # Wait for the steppers to finish moving before continuing
+            time.sleep(0.5)
+            self.pen_down = False
 
     def lower_pen(self):
-        if self.pen_state != 'down':
-            MovementController.queue_set_degrees(MarkerToggleServo, constants.PEN_DOWN_SERVO_ANGLE)
-            MovementController.send_queue()
+        if not self.pen_down:
+            self.ArdI.set_servo(MarkerToggleServo, constants.PEN_DOWN_SERVO_ANGLE)
+            # Wait for the steppers to finish moving before continuing
             time.sleep(0.5)
-            self.pen_state = 'down'
+            self.pen_down = True
 
     def follow_instruction(self, instruction: PointInstruction):
         # Move the motors to the correct position
-        MovementController.queue_set_stepper(TopLeftStepper, instruction.motor_left_position)
-        MovementController.queue_set_stepper(TopRightStepper, instruction.motor_right_position)
-        MovementController.send_queue()
+        self.ArdI.set_stepper(TopLeftStepper, instruction.motor_left_position)
+        self.ArdI.set_stepper(TopRightStepper, instruction.motor_right_position)
 
-        # Calculate distance travelled from the previous instruction to determine sleep time
-        previous_tl_pos = self.prev_instruction.motor_left_position if self.prev_instruction else 0
-        previous_tr_pos = self.prev_instruction.motor_right_position if self.prev_instruction else 0
-        distance_tl = instruction.motor_left_position - previous_tl_pos
-        distance_tr = instruction.motor_right_position - previous_tr_pos
-        max_distance = max(abs(distance_tl), abs(distance_tr))
-        sleep_time = self.time_per_step * max_distance
-        # Allow the motors to reach the position
-        time.sleep(sleep_time)
+        # Wait for the steppers to finish moving before continuing
+        while not self.ArdI.poll_sensor(SteppersFinishedSensor):
+            print("Debug: Waiting for steppers to finish moving.")
+            time.sleep(0.1)
 
         if instruction.pen_down_after:
             self.lower_pen()
@@ -112,7 +119,8 @@ class PenController:
         self.prev_instruction = instruction
 
 
-Pen = PenController()
+# This is how we will control moving the pen across the board and raising/lowering it (on/off the surface)
+Pen = PenController(Arduino)
 
 # ======================================= PRIMARY FUNCTIONS ====================================== #
 
@@ -344,7 +352,7 @@ def draw(instructions: list[PointInstruction], only_preview=False):
         t.goto(instruction.x_cm, instruction.y_cm)
         t.pendown() if instruction.pen_down_after else t.penup()
 
-        # If we are actually drawing and not just previewing
+        # If we are actually drawing and not just previewing, follow the instructions
         if not only_preview:
             Pen.follow_instruction(instruction)
             save_progress(i)
