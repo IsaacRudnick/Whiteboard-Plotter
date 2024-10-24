@@ -99,6 +99,9 @@ class PenController:
             # Wait for the steppers to finish moving before continuing
             time.sleep(0.5)
             self.pen_down = True
+            
+    def done_moving(self):
+        return self.ArdI.poll_sensor(SteppersFinishedSensor)
 
     def follow_instruction(self, instruction: PointInstruction):
         # Move the motors to the correct position
@@ -106,7 +109,7 @@ class PenController:
         self.ArdI.set_stepper(TopRightStepper, instruction.motor_right_position)
 
         # Wait for the steppers to finish moving before continuing
-        while not self.ArdI.poll_sensor(SteppersFinishedSensor):
+        while not self.done_moving():
             print("Debug: Waiting for steppers to finish moving.")
             time.sleep(0.1)
 
