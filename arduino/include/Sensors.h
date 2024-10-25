@@ -49,7 +49,7 @@ public:
     int read() override
     {
         // Check if all steppers have finished moving
-        for (int i = 0; i < steppers_count; i++)
+        for (int i = 0; i < steppersCount; i++)
         {
             if (steppers[i].distanceToGo() != 0)
             {
@@ -65,7 +65,8 @@ Sensor *sensors[] = {
     new SteppersFinishedSensor(),
 };
 
-const int sensorsCount = sizeof(sensors) / sizeof(sensors[0]);
+// Number of sensors (0 if none)
+const int sensorsCount = sizeof(sensors) ? sizeof(sensors) / sizeof(sensors[0]) : 0;
 
 // Setup all sensors
 void setupSensors()
