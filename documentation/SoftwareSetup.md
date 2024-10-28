@@ -78,13 +78,3 @@ The following term
 
 The below image illustrates these terms. In this image, the white rectangle represents the frame, which is the only area where the pen is allowed to draw.
 <img src="media/CanvasDiagram.png"/>
-
-<!--  -->
-<style>
-img {
-    border-radius: 10px; /* Adjust the value as needed for rounding */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0);
-    padding: 5px; /* Adds some space around the image */
-    background-color: gray; /* Ensures there's a background color for the padding */
-}
-</style>

@@ -101,13 +101,3 @@ This is what the top right corner of the whiteboard should look like when everyt
 <img src="media/BracketAndBeltInstalled.jpg" width="500"/>
 
 > Note the location of the spinner assembly, which is pointed at with a red arrow; it should be on the TOP of the belt, not to the side.
-
-<!--  -->
-<style>
-img {
-    border-radius: 10px; /* Adjust the value as needed for rounding */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow for a 3D effect */
-    padding: 5px; /* Adds some space around the image */
-    background-color: gray; /* Ensures there's a background color for the padding */
-}
-</style>
