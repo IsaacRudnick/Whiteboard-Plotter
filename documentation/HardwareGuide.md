@@ -23,11 +23,13 @@ There are also some misc. requirements which will depend on the specifics of you
   - 6 M3\*20 screws for attaching stepper motors to brackets
   - 2 M3\*16 screws and
   - 2 M3 washers for installing the bracket sleeve and spinner
-  - 8 M4 screws for attaching brackets to whiteboard
+  - 8 M4 screws for attaching brackets to whiteboard. Read note\*
   - 1 M4 screw and
   - 1 M4 nut for attaching/clamping the drawing implement to the pen holder
 - 2 D-cell batteries for the weight holder. You may modify the weight holder for whatever weight you have (e.g., loose screws, nuts, etc.).
 - A computer that can connect to the Arduino board. Consider a Raspberry Pi or an old laptop. It will need to stay connected for the duration of the drawing.
+
+> \*Note: You may need to use different screws depending on the material of your whiteboard. I've found wood screws often work better than machine screws.
 
 Finally, all prints in the [prints](/prints/) directory are required to build the robot.
 
@@ -57,11 +59,13 @@ Example:
 1. Install the SG90 Servo into the VP_Pen_Holder as shown below.
 
    <img src="media/ServoInstalled.jpg" width="300"/>
+
 1. Insert the midpoint of the belt into the VP_Pen_Holder
 1. Place an M4 nut inside of the VP_Pen_Holder on the side closer to the servo.
 1. Screw the M4 screw above the belt, through the VP_Pen_Holder, into the nut.
 
    <img src="media/BeltAndMarkerInstalled.jpg" width="300"/>
+
 1. Place two D-cell batteries into the VP_WeightHolder.
 1. Screw an M4 screw through the VP_Pen_Holder and the VP_WeightHolder. The two should be firmly attached with no pivoting about the screw. Ensure the VP_WeightHolder is pressed flush against the VP_Pen_Holder.
 
@@ -89,9 +93,11 @@ These steps will be repeated for both the left and right brackets. The pictures 
 1. Attach a pulleys to the stepper motor, ensuring the flat edge of the stepper motor shaft has a set screw pressing against it, as shown in the below example. Firmly tighten the set screws.
 
    <img src="media/PulleysInstalled.jpg" width="300"/>
+
 1. Attach the stepper motor to the VP_Bracket using M3\*20 screws. It is recommended to attach the stepper motor such that the wires are on one of the sides that will be facing away from the whiteboard. In the below image, those are the sides facing away from the camera.
 
    <img src="media/StepperMotorsInstalled.jpg" width="300"/>
+
 1. By hand, rotate the belt into the pulley. Depower the steppers to facilitate this.
 1. Attach the VP_Bracket to the whiteboard using M4 screws. On each bracket, the sleeve/spinner side should be the highest when installed (this is how to differentiate the left vs. right bracket).
    > It is recommended to drill holes in the whiteboard before screwing in the screws. You can use the bracket as a location template. Pre-drilling will help prevent the whiteboard from cracking.
