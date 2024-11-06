@@ -1,5 +1,5 @@
 from enum import Enum
-from utils import map, clamp
+from pycomponents.utils import map, clamp
 
 
 class ServoConnectionType(Enum):
