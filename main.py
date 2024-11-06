@@ -9,7 +9,6 @@ import user_setup as user_settings
 import xml.etree.ElementTree as ET
 from progress.bar import ChargingBar
 import cv2
-import actuators
 import pycomponents.ArduinoInterface as ArduinoInterface
 from pycomponents.Stepper import StepperDirection as StepperDirection
 from pycomponents.Servo import ServoConnectionType, ServoActuationType, ServoInverted 
@@ -47,7 +46,7 @@ if lp_warning or rp_warning or tp_warning or bp_warning:
 # ===================================== Classes and Instances ==================================== #
 
 # Create the steppers and servo that control the physical plotter
-TopLeftStepper =  as ArduinoInterface.Stepper(0, StepperDirection.NORMAL)
+TopLeftStepper =  ArduinoInterface.Stepper(0, StepperDirection.NORMAL)
 TopRightStepper = ArduinoInterface.Stepper(1, StepperDirection.INVERTED)
 MarkerToggleServo = ArduinoInterface.Servo(0,
                                            ServoConnectionType.PWM,
